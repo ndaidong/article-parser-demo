@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0rc1",
+  "name": "technews",
+  "homepage": "https://www.npmjs.com/package/hyperapp-init",
+  "description": "Engine for server site renderer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ndaidong/hyperapp-init"
+  },
+  "author": "@ndaidong",
+  "engines": {
+    "node": ">= 8.6"
+  },
+  "scripts": {
+    "start": "DEBUG=technews:* node index",
+    "build": "NODE_ENV=build node index",
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "NODE_ENV=test tap test/start.js --coverage --reporter=spec"
+  },
+  "dependencies": {
+    "@rollup/plugin-strip": "^1.3.1",
+    "article-parser": "^4.0.0-rc2",
+    "autoprefixer": "^9.6.1",
+    "bellajs": "^8.0.0-rc1",
+    "cheerio": "^1.0.0-rc.3",
+    "clean-css": "^4.2.1",
+    "debug": "^4.1.1",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "html-minifier": "^4.0.0",
+    "lit-html": "^1.1.2",
+    "lru-cache": "^5.1.1",
+    "postcss": "^7.0.18",
+    "postcss-custom-media": "^7.0.8",
+    "postcss-custom-properties": "^9.0.2",
+    "postcss-import": "^12.0.1",
+    "postcss-nested": "^4.1.2",
+    "postcss-short": "^5.0.0",
+    "pretty": "^2.0.0",
+    "rollup": "^1.21.2",
+    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "strip-css-comments": "^4.0.0",
+    "terser": "^4.3.1"
+  },
+  "devDependencies": {
+    "eslint-config-goes": "^1.1.6",
+    "tap": "^14.6.2"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,102 @@
+* {
+  padding: 0;
+  margin: 0;
+  cursor: default;
+  font-family: sans-serif;
+  box-sizing: border-box;
+  font-display: optional;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #080830;
+  color: #efd;
+}
+
+.wrapper {
+  max-width: 800px;
+  margin: 20px auto;
+  a, a:link, a:visited {
+    cursor: pointer;
+    color: #0ff;
+    text-decoration: none;
+  }
+}
+
+fieldset {
+  margin: 10px auto 20px;
+  padding: 20px;
+  border: dashed 1px #666;
+
+  & legend {
+    padding: 0px 10px;
+    font-style: italic;
+  }
+}
+
+input, button {
+  padding: 10px;
+  font-size: 16px;
+}
+
+header {
+  margin: 30px auto 40px;
+  text-align: center;
+  & h1 {
+    font-size: 60px;
+  }
+}
+
+main {
+  min-height: 300px;
+  margin: 20px auto;
+
+  & #inputUrl {
+    width: 80%;
+    cursor: text;
+  }
+  & #btnExtract {
+    width: 20%;
+    min-width: 80px;
+    max-width: 120px;
+    &:hover {
+      background-color: #fce;
+    }
+  }
+
+  .output {
+    & section {
+      margin: 0px 0px 10px;
+      padding: 10px;
+    }
+    & label {
+      display: block;
+      float: left;
+      width: 20%;
+      min-width: 80px;
+      max-width: 120px;
+      text-align: right;
+      padding-right: 10px;
+      &:after {
+        content: ":";
+      }
+    }
+    & div.ap-present {
+      width: 80%;
+      float: left;
+      min-height: 20px;
+    }
+  }
+
+  & hr {
+    width: 60%;
+    height: 1px;
+    color: #eed;
+    margin: auto;
+  }
+}
+
+footer {
+  text-align: center;
+}
