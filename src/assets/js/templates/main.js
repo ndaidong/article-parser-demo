@@ -1,61 +1,154 @@
 // templates --> main.js
 
-import {html} from 'lit-html';
+import {truncate} from 'bellajs';
 
+import {html} from 'lit-html';
+import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
+
+const showImage = (src) => {
+  return src === '' ? '' : unsafeHTML(`
+    <a href="${src}" target="_blank">
+      <img src="${src}" class="responsive image">
+    </a>
+  `);
+};
+
+const showArticle = (content) => {
+  return content === '' ? '' : unsafeHTML(`
+    <iframe id="ifcontent"></iframe>
+  `);
+};
 
 const showLink = (url) => {
-  return url ? `<a href="${url}" target="_blank">${url}</a>` : '';
+  return url ? `<a href="${url}" target="_blank">${truncate(url, 120)}</a>` : '';
 };
+
+const listLink = (urls) => {
+  const renderList = (links) => {
+    const arr = [];
+    links.forEach((link) => {
+      arr.push(`<li>${showLink(link)}</li>`);
+    });
+    return '<ul>' + arr.join('') + '</ul>';
+  };
+  return urls.length === 0 ? '' : renderList(urls);
+};
+
+
+const clearInput = () => {
+  const inputUrl = document.getElementById('inputUrl');
+  inputUrl.value = '';
+};
+
+const onSubmit = (e, state) => {
+  e.preventDefault();
+  const btnExtract = document.getElementById('btnExtract');
+  if (btnExtract.classList.contains('disable')) {
+    return false;
+  }
+  const inputUrl = document.getElementById('inputUrl');
+  const url = inputUrl.value.trim();
+  const {
+    links = [],
+  } = state.article;
+  if (links.includes(url)) {
+    return false;
+  }
+  window.App.parse(url, btnExtract);
+};
+
 
 export const tplMain = (state) => {
   return html`<main>
-    <form onsubmit="return false;">
+    <form @submit=${(e) => onSubmit(e, state)}">
       <fieldset class="input">
         <legend>Please enter a valid URL</legend>
-        <input type="url" id="inputUrl" placeholder="https://...">
+        <input
+          type="url"
+          @dblclick=${clearInput}
+          id="inputUrl"
+          placeholder="https://..."
+        >
         <button type="submit" id="btnExtract">Extract</button>
       </fieldset>
     </form>
     <fieldset class="output">
-      <legend>Result</legend>
-      <section>
-        <label>url</label>
-        <div class="ap-present">${showLink(state.article.url)}</div>
-      </section>
-      <section>
-        <label>title</label>
-        <div class="ap-present">${state.article.title}</div>
-      </section>
-      <section>
-        <label>description</label>
-        <div class="ap-present">${state.article.description}</div>
-      </section>
-      <section>
-        <label>image</label>
-        <div class="ap-present">${state.article.image}</div>
-      </section>
-      <section>
-        <label>author</label>
-        <div class="ap-present">${state.article.author}</div>
-      </section>
-      <section>
-        <label>content</label>
-        <div class="ap-present">${state.article.content}</div>
-      </section>
-      <section>
-        <label>source</label>
-        <div class="ap-present">${state.article.source}</div>
-      </section>
-      <section>
-        <label>published</label>
-        <div class="ap-present">${state.article.published}</div>
-      </section>
-      <section>
-        <label>links</label>
-        <div class="ap-present">${state.article.links.map(showLink)}</div>
-      </section>
+      <legend>Result:</legend>
+      <table>
+        <tr>
+          <td>
+            <label>title</label>
+          </td>
+          <td class="ap-present">
+            ${unsafeHTML(state.article.title)}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>description</label>
+          </td>
+          <td class="ap-present">
+            ${unsafeHTML(state.article.description)}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>image</label>
+          </td>
+          <td class="ap-present">
+            ${showImage(state.article.image)}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>content</label>
+          </td>
+          <td class="ap-present">
+            ${showArticle(state.article.content)}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>author</label>
+          </td>
+          <td class="ap-present">
+            ${state.article.author}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>source</label>
+          </td>
+          <td class="ap-present">
+            ${state.article.source}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>published</label>
+          </td>
+          <td class="ap-present">
+            ${state.article.published}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>url</label>
+          </td>
+          <td class="ap-present">
+            ${unsafeHTML(showLink(state.article.url))}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>links</label>
+          </td>
+          <td class="ap-present">
+            ${unsafeHTML(listLink(state.article.links))}
+          </td>
+        </tr>
+      </table>
     </fieldset>
-    <hr>
   </main>`;
 };
 

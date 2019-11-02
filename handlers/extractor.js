@@ -2,11 +2,13 @@
 
 import {extract} from 'article-parser';
 
+import {verify} from '../utils/auth';
 import {info, error} from '../utils/logger';
 
 
 const getArticleFrom = async (url = '') => {
   info(`Start extracting article from "${url}"`);
+
   const result = {
     error: 1,
     article: null,
@@ -29,6 +31,13 @@ const getArticleFrom = async (url = '') => {
 
 export default async (req, res) => {
   const {url = ''} = req.query;
-  const result = await getArticleFrom(url);
-  return res.json(result);
+  const ApiKey = req.get('ApiKey');
+  if (verify(ApiKey)) {
+    const result = await getArticleFrom(url);
+    return res.json(result);
+  }
+  return res.json({
+    error: 1,
+    message: 'ApiKey is missing or invalid',
+  });
 };

@@ -4,31 +4,38 @@ import {normalize} from 'path';
 import {existsSync} from 'fs';
 
 import {rollup} from 'rollup';
+import strip from '@rollup/plugin-strip';
+import replace from '@rollup/plugin-replace';
+
 import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-import strip from '@rollup/plugin-strip';
 import cleanup from 'rollup-plugin-cleanup';
 import terser from 'terser';
 
 import LRU from 'lru-cache';
 
 import {error, info} from './logger';
+import {getCredentials} from './auth';
 import {getConfig} from '../configs';
 
 const config = getConfig();
 const cache = new LRU({
   max: 500,
-  maxAge: config.ENV === 'dev' ? 10e3 : 10e6,
+  maxAge: config.ENV === 'dev' ? 5e3 : 6e4 * 60 * 3,
 });
 
 const rollupify = async (input) => {
   try {
     info('Start parsing JS file with Rollup...');
+    const {clientSecret} = getCredentials();
     const plugins = [
       nodeResolve(),
       commonjs({
         include: 'node_modules/**',
         sourceMap: false,
+      }),
+      replace({
+        __clientSecret__: clientSecret,
       }),
       cleanup(),
     ];

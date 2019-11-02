@@ -5,6 +5,7 @@ import {existsSync} from 'fs';
 
 import {isString} from 'bellajs';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 
 import {getConfig} from './configs';
 
@@ -14,6 +15,7 @@ import parseJS from './utils/parseJS';
 import parseCSS from './utils/parseCSS';
 import parseHTML from './utils/parseHTML';
 
+import {getCredentials} from './utils/auth';
 import {info, error} from './utils/logger';
 
 import handleRequest from './handlers/extractor';
@@ -26,6 +28,9 @@ const {
 } = getConfig();
 
 const app = express();
+
+app.use(cookieParser());
+
 app.set('etag', 'strong');
 app.disable('x-powered-by');
 
@@ -34,7 +39,7 @@ if (existsSync(staticDir)) {
   app.use(express.static(staticDir, staticOpt));
 }
 
-app.get('/extract', (req, res) => {
+app.get('/api/extract', (req, res) => {
   return handleRequest(req, res);
 });
 
@@ -58,8 +63,10 @@ app.get('/assets/*', async (req, res, next) => {
 });
 
 app.get('/', (req, res) => {
+  const {clientId} = getCredentials();
   const html = readFile(`${baseDir}/${srcDir}/index.html`);
   res.type('text/html');
+  res.cookie('clientId', clientId);
   res.send(parseHTML(html));
 });
 

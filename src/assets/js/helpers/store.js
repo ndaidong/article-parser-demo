@@ -1,30 +1,52 @@
 // helpers -> store.js
 
+import {clone} from 'bellajs';
+
 const createStore = () => {
+  const emptyArticle = {
+    url: '',
+    links: [],
+    title: '',
+    description: '',
+    image: '',
+    author: '',
+    content: '',
+    source: '',
+    published: '',
+  };
+
   const state = {
     title: 'Article Parser',
     author: '@ndaidong',
     authorLink: 'https://twitter.com/ndaidong',
-    processing: false,
-    article: {
-      url: '',
-      links: [],
-      title: '',
-      description: '',
-      image: '',
-      author: '',
-      content: '',
-      source: '',
-      published: '',
-    },
+    clientSecret: '__clientSecret__',
+    article: clone(emptyArticle),
   };
-  const init = async () => {
+
+
+  const setArticle = (article) => {
+    state.article = article;
+  };
+
+  const unsetArticle = () => {
+    state.article = clone(emptyArticle);
+  };
+
+  const getState = () => {
     return state;
+  };
+
+  const init = async () => {
+    unsetArticle();
+    return getState();
   };
 
   return {
     init,
+    setArticle,
+    unsetArticle,
+    getState,
   };
 };
 
-export const Store = createStore();
+export default createStore();
