@@ -12,10 +12,10 @@ import commonjs from 'rollup-plugin-commonjs';
 import cleanup from 'rollup-plugin-cleanup';
 import terser from 'terser';
 
+import {md5} from 'bellajs';
 import LRU from 'lru-cache';
 
 import {error, info} from './logger';
-import {getCredentials} from './auth';
 import {getConfig} from '../configs';
 
 const config = getConfig();
@@ -24,10 +24,9 @@ const cache = new LRU({
   maxAge: config.ENV === 'dev' ? 5e3 : 6e4 * 60 * 3,
 });
 
-const rollupify = async (input) => {
+const rollupify = async (input, clientSecret = '') => {
   try {
     info('Start parsing JS file with Rollup...');
-    const {clientSecret} = getCredentials();
     const plugins = [
       nodeResolve(),
       commonjs({
@@ -86,8 +85,9 @@ const rollupify = async (input) => {
   }
 };
 
-export default async (filePath) => {
-  const c = cache.get(filePath);
+export default async (filePath, clientSecret) => {
+  const key = md5([filePath, clientSecret].join(''));
+  const c = cache.get(key);
   if (c) {
     return c;
   }
@@ -100,7 +100,7 @@ export default async (filePath) => {
     error(`File does not exist: ${fullPath}`);
     return null;
   }
-  const jsContent = await rollupify(fullPath);
-  cache.set(filePath, jsContent);
+  const jsContent = await rollupify(fullPath, clientSecret);
+  cache.set(key, jsContent);
   return jsContent;
 };

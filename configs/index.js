@@ -1,8 +1,14 @@
 // config
 
 import {
+  existsSync,
+  mkdirSync,
+} from 'fs';
+
+import {
   genid,
   clone,
+  md5,
 } from 'bellajs';
 
 import {
@@ -17,6 +23,13 @@ const staticOpt = {
   lastModified: true,
 };
 
+const fileStoreOpt = {
+  path: 'storage/sessions',
+  keyFunction: (secret, sessionId) => {
+    return md5([secret, sessionId].join('-'));
+  },
+};
+
 const env = process.env || {}; // eslint-disable-line no-process-env
 
 [
@@ -29,6 +42,12 @@ const env = process.env || {}; // eslint-disable-line no-process-env
   }
 });
 
+(() => {
+  if (!existsSync(fileStoreOpt.path)) {
+    mkdirSync(fileStoreOpt.path, {recursive: true});
+  }
+})();
+
 let config = {
   ENV: env.ENV || 'dev',
   host: env.HOST || '0.0.0.0',
@@ -37,7 +56,8 @@ let config = {
   baseDir: './',
   srcDir: './src',
   distDir: './dist',
-  staticOpt: staticOpt,
+  staticOpt,
+  fileStoreOpt,
   rev: genid(40),
 };
 

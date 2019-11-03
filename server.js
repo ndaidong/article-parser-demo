@@ -3,9 +3,10 @@
 import {normalize} from 'path';
 import {existsSync} from 'fs';
 
-import {isString} from 'bellajs';
+import {isString, genid} from 'bellajs';
 import express from 'express';
-import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import sfstore from 'session-file-store';
 
 import {getConfig} from './configs';
 
@@ -20,16 +21,32 @@ import {info, error} from './utils/logger';
 
 import handleRequest from './handlers/extractor';
 
+import {name, version} from './package.json';
+
 const {
   baseDir,
   srcDir,
   staticOpt,
+  fileStoreOpt,
   port,
+  ENV,
 } = getConfig();
 
 const app = express();
 
-app.use(cookieParser());
+const FileStore = sfstore(session);
+app.use(session({
+  store: new FileStore(fileStoreOpt),
+  secret: `${name}@${version}`,
+  genid: () => genid(24),
+  name,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: ENV === 'prod',
+    maxAge: ENV === 'prod' ? 6e4 * 60 * 2 : 6e4 * 2,
+  },
+}));
 
 app.set('etag', 'strong');
 app.disable('x-powered-by');
@@ -46,7 +63,12 @@ app.get('/api/extract', (req, res) => {
 app.get('/assets/*', async (req, res, next) => {
   const filePath = req.params[0];
   if (filePath.endsWith('.js')) {
-    const jsContent = await parseJS(filePath);
+    const {clientId, clientSecret} = req.session;
+    if (!clientId || !clientSecret) {
+      error('Missing cliendId or clientSecret');
+      return next();
+    }
+    const jsContent = await parseJS(filePath, clientSecret);
     if (jsContent && isString(jsContent)) {
       res.type('text/javascript');
       return res.send(jsContent);
@@ -63,7 +85,14 @@ app.get('/assets/*', async (req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  const {clientId} = getCredentials();
+  let {clientId, clientSecret} = req.session;
+  if (!clientId || !clientSecret) {
+    const cred = getCredentials();
+    clientId = cred.clientId;
+    clientSecret = cred.clientSecret;
+    req.session.clientId = clientId;
+    req.session.clientSecret = clientSecret;
+  }
   const html = readFile(`${baseDir}/${srcDir}/index.html`);
   res.type('text/html');
   res.cookie('clientId', clientId);

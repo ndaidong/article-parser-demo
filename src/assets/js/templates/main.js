@@ -34,6 +34,12 @@ const listLink = (urls) => {
   return urls.length === 0 ? '' : renderList(urls);
 };
 
+const dplNotice = (state) => {
+  return state.parserMessage === '' ? '' : html`
+    <span class="error">${state.parserMessage}</span>
+  `;
+};
+
 
 const clearInput = () => {
   const inputUrl = document.getElementById('inputUrl');
@@ -72,6 +78,9 @@ export const tplMain = (state) => {
         <button type="submit" id="btnExtract">Extract</button>
       </fieldset>
     </form>
+    <div class="notice">
+      ${dplNotice(state)}
+    </div>
     <fieldset class="output">
       <legend>Result:</legend>
       <table>

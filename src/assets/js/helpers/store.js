@@ -20,16 +20,21 @@ const createStore = () => {
     author: '@ndaidong',
     authorLink: 'https://twitter.com/ndaidong',
     clientSecret: '__clientSecret__',
+    overlayMessage: '',
+    parserMessage: '',
     article: clone(emptyArticle),
   };
 
 
   const setArticle = (article) => {
     state.article = article;
+    return state;
   };
 
   const unsetArticle = () => {
+    state.parserMessage = '';
     state.article = clone(emptyArticle);
+    return state;
   };
 
   const getState = () => {
@@ -43,6 +48,14 @@ const createStore = () => {
 
   return {
     init,
+    setOverlayMessage: (txt) => {
+      state.overlayMessage = txt;
+      return state;
+    },
+    setParserMessage: (txt) => {
+      state.parserMessage = txt;
+      return state;
+    },
     setArticle,
     unsetArticle,
     getState,

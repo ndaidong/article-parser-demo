@@ -12,11 +12,14 @@ const getCookie = (name) => {
 export const extract = async (url, clientSecret) => {
   try {
     const clientId = getCookie('clientId');
-    const credential = md5([clientId, clientSecret].join('-'));
+    const credentials = md5([clientId, clientSecret].join('-'));
+    console.log('clientId', clientId);
+    console.log('clientSecret', clientSecret);
+    console.log('credentials', credentials);
     const target = `${API_BASE_URL}?url=${encodeURIComponent(url)}`;
     const data = await fetch(target, {
       headers: {
-        ApiKey: credential,
+        credentials,
       },
     });
     return data.json();

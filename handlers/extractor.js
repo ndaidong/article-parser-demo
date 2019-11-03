@@ -3,8 +3,8 @@
 import {extract} from 'article-parser';
 
 import {verify} from '../utils/auth';
+import {trackFailedExtraction} from '../utils/tracker';
 import {info, error} from '../utils/logger';
-
 
 const getArticleFrom = async (url = '') => {
   info(`Start extracting article from "${url}"`);
@@ -19,11 +19,15 @@ const getArticleFrom = async (url = '') => {
       result.error = 0;
       result.article = article;
     } else {
-      result.message = `Failed while extrcting article from "${url}"`;
+      result.errorType = 'parser';
+      result.message = 'Could not extract article from this url';
     }
   } catch (err) {
     error(err);
-    result.error = err;
+    result.error = 1;
+    result.errorType = 'parser';
+    result.message = 'Extracting failed!';
+    trackFailedExtraction(url, err.message || 'Unknown error');
   }
   return result;
 };
@@ -31,13 +35,15 @@ const getArticleFrom = async (url = '') => {
 
 export default async (req, res) => {
   const {url = ''} = req.query;
-  const ApiKey = req.get('ApiKey');
-  if (verify(ApiKey)) {
+  const credentials = req.get('credentials');
+  const {clientId = '', clientSecret = ''} = req.session;
+  if (verify(clientId, clientSecret, credentials)) {
     const result = await getArticleFrom(url);
     return res.json(result);
   }
   return res.json({
     error: 1,
-    message: 'ApiKey is missing or invalid',
+    errorType: 'credentials',
+    message: 'Credentials are missing or invalid!',
   });
 };
