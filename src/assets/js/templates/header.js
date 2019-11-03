@@ -5,7 +5,7 @@ import {html} from 'lit-html';
 
 export const tplHeader = (state) => {
   return html`<header>
-    <h1>${state.title}</h1>
+    <h1><a href="https://github.com/ndaidong/article-parser">${state.title}</a></h1>
     </header>`
   ;
 };

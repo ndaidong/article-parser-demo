@@ -20,7 +20,7 @@ const getArticleFrom = async (url = '') => {
       result.article = article;
     } else {
       result.errorType = 'parser';
-      result.message = 'Could not extract article from this url';
+      result.message = 'Could not extract article from this url!';
     }
   } catch (err) {
     error(err);
