@@ -68,7 +68,7 @@ export const tplMain = (state) => {
   return html`<main>
     <form @submit=${(e) => onSubmit(e, state)}">
       <fieldset class="input">
-        <legend>Please enter a valid URL</legend>
+        <legend>Enter link to your favorite article:</legend>
         <input
           type="url"
           @dblclick=${clearInput}
@@ -82,7 +82,7 @@ export const tplMain = (state) => {
       ${dplNotice(state)}
     </div>
     <fieldset class="output">
-      <legend>Result:</legend>
+      <legend>Result will display here:</legend>
       <table>
         <tr>
           <td>
