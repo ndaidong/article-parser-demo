@@ -15,10 +15,8 @@ import {
   warning,
 } from '../utils/logger';
 
-const cacheTime = 3600;
-
 const staticOpt = {
-  maxAge: cacheTime * 1000,
+  maxAge: 6e4 * 60,
   etag: true,
   lastModified: true,
 };
@@ -48,11 +46,15 @@ const env = process.env || {}; // eslint-disable-line no-process-env
   }
 })();
 
+const siteUrl = env.ENV === 'prod' ?
+  'https://article-parser-demo.ctdtmnhnlcndt.com' :
+  'http://0.0.0.0:7214';
+
 let config = {
   ENV: env.ENV || 'dev',
   host: env.HOST || '0.0.0.0',
   port: env.PORT || 7214,
-  url: 'http://0.0.0.0:7214',
+  url: siteUrl,
   baseDir: './',
   srcDir: './src',
   distDir: './dist',
