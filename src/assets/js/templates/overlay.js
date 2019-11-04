@@ -19,8 +19,7 @@ export const tplOverlay = (state) => {
             Please 
               <span
                 class="ctrl"
-                @click=${reload}>reload page
-              </span> 
+                @click=${reload}>reload page</span> 
             to get new one.
           </div>
         </div>

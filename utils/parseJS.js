@@ -15,6 +15,7 @@ import terser from 'terser';
 import {md5} from 'bellajs';
 import LRU from 'lru-cache';
 
+import {getCredentials} from './auth';
 import {error, info} from './logger';
 import {getConfig} from '../configs';
 
@@ -36,9 +37,12 @@ const rollupify = async (input, clientSecret = '') => {
       replace({
         __clientSecret__: clientSecret,
       }),
-      cleanup(),
+      cleanup({
+        comments: 'none',
+        maxEmptyLines: 0,
+      }),
     ];
-    if (config.ENV != 'dev') {
+    if (config.ENV !== 'dev') {
       plugins.push(strip({
         debugger: false,
         functions: [
@@ -69,15 +73,21 @@ const rollupify = async (input, clientSecret = '') => {
         codeParts.push(chunkOrAsset.code);
       }
     }
-    info('Rollupified JS content.');
+    info('Rollupified');
 
     const jsCode = codeParts.join('\n');
 
-    if (config.ENV == 'dev') {
+    if (config.ENV === 'dev') {
       return jsCode;
     }
 
-    const minOutput = terser.minify(jsCode);
+    const minOutput = terser.minify(jsCode, {
+      toplevel: true,
+      output: {
+        beautify: false,
+      },
+    });
+    info('Minified');
     return minOutput.code;
   } catch (err) {
     error(err);
@@ -85,8 +95,9 @@ const rollupify = async (input, clientSecret = '') => {
   }
 };
 
-export default async (filePath, clientSecret) => {
-  const key = md5([filePath, clientSecret].join(''));
+export default async (filePath) => {
+  const {clientSecret} = getCredentials();
+  const key = md5([filePath, config.ENV, clientSecret].join('-'));
   const c = cache.get(key);
   if (c) {
     return c;

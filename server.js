@@ -63,12 +63,7 @@ app.get('/api/extract', (req, res) => {
 app.get('/assets/*', async (req, res, next) => {
   const filePath = req.params[0];
   if (filePath.endsWith('.js')) {
-    const {clientId, clientSecret} = req.session;
-    if (!clientId || !clientSecret) {
-      error('Missing cliendId or clientSecret');
-      return next();
-    }
-    const jsContent = await parseJS(filePath, clientSecret);
+    const jsContent = await parseJS(filePath);
     if (jsContent && isString(jsContent)) {
       res.type('text/javascript');
       return res.send(jsContent);
@@ -85,17 +80,11 @@ app.get('/assets/*', async (req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  let {clientId, clientSecret} = req.session;
-  if (!clientId || !clientSecret) {
-    const cred = getCredentials();
-    clientId = cred.clientId;
-    clientSecret = cred.clientSecret;
-    req.session.clientId = clientId;
-    req.session.clientSecret = clientSecret;
-  }
+  const {clientId} = getCredentials();
+  res.cookie('clientId', clientId);
+
   const html = readFile(`${baseDir}/${srcDir}/index.html`);
   res.type('text/html');
-  res.cookie('clientId', clientId);
   res.send(parseHTML(html));
 });
 

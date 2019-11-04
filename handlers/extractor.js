@@ -36,8 +36,7 @@ const getArticleFrom = async (url = '') => {
 export default async (req, res) => {
   const {url = ''} = req.query;
   const credentials = req.get('credentials');
-  const {clientId = '', clientSecret = ''} = req.session;
-  if (verify(clientId, clientSecret, credentials)) {
+  if (verify(credentials)) {
     const result = await getArticleFrom(url);
     return res.json(result);
   }
