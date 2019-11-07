@@ -19,9 +19,9 @@
     "test": "NODE_ENV=test tap test/start.js --coverage --reporter=spec"
   },
   "dependencies": {
-    "@rollup/plugin-replace": "^2.2.0",
+    "@rollup/plugin-replace": "^2.2.1",
     "@rollup/plugin-strip": "^1.3.1",
-    "article-parser": "^4.0.0",
+    "article-parser": "^4.0.1",
     "autoprefixer": "^9.7.1",
     "bellajs": "^8.0.1",
     "cheerio": "^1.0.0-rc.3",
@@ -38,7 +38,7 @@
     "postcss-custom-media": "^7.0.8",
     "postcss-custom-properties": "^9.0.2",
     "postcss-import": "^12.0.1",
-    "postcss-nested": "^4.1.2",
+    "postcss-nested": "^4.2.1",
     "postcss-short": "^5.0.0",
     "pretty": "^2.0.0",
     "rollup": "^1.26.3",
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "eslint-config-goes": "^1.1.8",
-    "tap": "^14.9.1"
+    "tap": "^14.9.2"
   },
   "license": "MIT"
 }
