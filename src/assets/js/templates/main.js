@@ -35,8 +35,10 @@ const listLink = (urls) => {
 };
 
 const dplNotice = (state) => {
+  const title = encodeURIComponent('Extraction failed');
   return state.parserMessage === '' ? '' : html`
     <span class="error">${state.parserMessage}</span>
+    <a href="https://github.com/ndaidong/article-parser/issues/new?title=${title}" target="_blank">Report</a>
   `;
 };
 

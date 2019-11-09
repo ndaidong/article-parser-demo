@@ -6,6 +6,8 @@ import {verify} from '../utils/auth';
 import {trackFailedExtraction} from '../utils/tracker';
 import {info, error} from '../utils/logger';
 
+import {getConfig} from '../configs';
+
 const getArticleFrom = async (url = '') => {
   info(`Start extracting article from "${url}"`);
 
@@ -27,7 +29,10 @@ const getArticleFrom = async (url = '') => {
     result.error = 1;
     result.errorType = 'parser';
     result.message = 'Extracting failed!';
-    trackFailedExtraction(url, err.message || 'Unknown error');
+    const {ENV} = getConfig();
+    if (ENV === 'prod') {
+      trackFailedExtraction(url, err.message || 'Unknown error');
+    }
   }
   return result;
 };
