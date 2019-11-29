@@ -69,6 +69,7 @@ export const trackFailedExtraction = (url, msgErr) => {
       'Please take a look into this problem!<br>Best regards.',
       'Your bot',
     ].join('<br><br>'));
+    savedUrls.add(url);
   }
 };
 
