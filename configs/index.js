@@ -1,32 +1,13 @@
 // config
 
 import {
-  existsSync,
-  mkdirSync,
-} from 'fs';
-
-import {
   genid,
   clone,
-  md5,
 } from 'bellajs';
 
 import {
   warning,
 } from '../utils/logger';
-
-const staticOpt = {
-  maxAge: 6e4 * 60,
-  etag: true,
-  lastModified: true,
-};
-
-const fileStoreOpt = {
-  path: 'storage/sessions',
-  keyFunction: (secret, sessionId) => {
-    return md5([secret, sessionId].join('-'));
-  },
-};
 
 const env = process.env || {}; // eslint-disable-line no-process-env
 
@@ -40,12 +21,6 @@ const env = process.env || {}; // eslint-disable-line no-process-env
   }
 });
 
-(() => {
-  if (!existsSync(fileStoreOpt.path)) {
-    mkdirSync(fileStoreOpt.path, {recursive: true});
-  }
-})();
-
 const siteUrl = env.ENV === 'prod' ?
   'https://article-parser-demo.ctdtmnhnlcndt.com' :
   'http://0.0.0.0:7214';
@@ -57,9 +32,8 @@ let config = {
   url: siteUrl,
   baseDir: './',
   srcDir: './src',
-  distDir: './dist',
-  staticOpt,
-  fileStoreOpt,
+  distDir: './docs',
+  staticDir: './src/static',
   rev: genid(40),
 };
 

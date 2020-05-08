@@ -7,17 +7,11 @@ import postcss from 'postcss';
 import CleanCSS from 'clean-css';
 import stripCssComments from 'strip-css-comments';
 
-import LRU from 'lru-cache';
-
 import {error, info} from './logger';
 import readFile from './readFile';
 import {getConfig} from '../configs';
 
 const config = getConfig();
-const cache = new LRU({
-  max: 500,
-  maxAge: config.ENV === 'dev' ? 10e3 : 10e6,
-});
 
 const POSTCSS_PLUGINS = [
   require('postcss-import'),
@@ -64,10 +58,6 @@ const postify = async (fileSrc) => {
 };
 
 export default async (filePath) => {
-  const c = cache.get(filePath);
-  if (c) {
-    return c;
-  }
   const {
     baseDir,
     srcDir,
@@ -80,6 +70,5 @@ export default async (filePath) => {
   info('Start parsing CSS content with PostCSS...');
   const cssContent = await postify(fullPath);
   info(`Postified CSS file '${fullPath}'`);
-  cache.set(filePath, cssContent);
   return cssContent;
 };

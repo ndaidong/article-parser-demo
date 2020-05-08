@@ -19,7 +19,6 @@ const createStore = () => {
     title: 'Article Parser',
     author: '@ndaidong',
     authorLink: 'https://twitter.com/ndaidong',
-    clientSecret: '__clientSecret__',
     overlayMessage: '',
     parserMessage: '',
     article: clone(emptyArticle),

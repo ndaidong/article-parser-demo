@@ -39,21 +39,17 @@ const App = window.App = {
     disableButton(btnExtract);
     const cstate = Store.unsetArticle();
     App.render(cstate);
-    const {clientSecret} = cstate;
-    const data = await Loader.extract(url, clientSecret);
-    if (!data.error) {
-      const {article} = data;
-      const state = Store.setArticle(article);
+    const res = await Loader.extract(url);
+    if (!res.error) {
+      const {data} = res;
+      const state = Store.setArticle(data);
       App.render(state);
       const ifr = document.getElementById('ifcontent');
       if (ifr && state.article.content) {
         Writer.setContent(state.article.content, ifr);
       }
-    } else if (data.errorType === 'credentials') {
-      const state = Store.setOverlayMessage(data.message);
-      App.render(state);
-    } else if (data.errorType === 'parser') {
-      const state = Store.setParserMessage(data.message);
+    } else {
+      const state = Store.setParserMessage(res.message);
       App.render(state);
     }
     enableButton(btnExtract);

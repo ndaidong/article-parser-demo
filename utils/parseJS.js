@@ -5,27 +5,18 @@ import {existsSync} from 'fs';
 
 import {rollup} from 'rollup';
 import strip from '@rollup/plugin-strip';
-import replace from '@rollup/plugin-replace';
 
-import nodeResolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import cleanup from 'rollup-plugin-cleanup';
 import terser from 'terser';
 
-import {md5} from 'bellajs';
-import LRU from 'lru-cache';
-
-import {getCredentials} from './auth';
 import {error, info} from './logger';
 import {getConfig} from '../configs';
 
 const config = getConfig();
-const cache = new LRU({
-  max: 500,
-  maxAge: config.ENV === 'dev' ? 5e3 : 6e4 * 60 * 3,
-});
 
-const rollupify = async (input, clientSecret = '') => {
+const rollupify = async (input) => {
   try {
     info('Start parsing JS file with Rollup...');
     const plugins = [
@@ -33,9 +24,6 @@ const rollupify = async (input, clientSecret = '') => {
       commonjs({
         include: 'node_modules/**',
         sourceMap: false,
-      }),
-      replace({
-        __clientSecret__: clientSecret,
       }),
       cleanup({
         comments: 'none',
@@ -96,12 +84,6 @@ const rollupify = async (input, clientSecret = '') => {
 };
 
 export default async (filePath) => {
-  const {clientSecret} = getCredentials();
-  const key = md5([filePath, config.ENV, clientSecret].join('-'));
-  const c = cache.get(key);
-  if (c) {
-    return c;
-  }
   const {
     baseDir,
     srcDir,
@@ -111,7 +93,6 @@ export default async (filePath) => {
     error(`File does not exist: ${fullPath}`);
     return null;
   }
-  const jsContent = await rollupify(fullPath, clientSecret);
-  cache.set(key, jsContent);
+  const jsContent = await rollupify(fullPath);
   return jsContent;
 };

@@ -1,27 +1,12 @@
 // helpers -> loader
 
-import {md5} from 'bellajs';
+const API_BASE_URL = 'https://us-central1-technews-251304.cloudfunctions.net/article-parser';
 
-const API_BASE_URL = '/api/extract';
 
-const getCookie = (name) => {
-  const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-  return v ? v[2] : null;
-};
-
-export const extract = async (url, clientSecret) => {
+export const extract = async (url) => {
   try {
-    const clientId = getCookie('clientId');
-    const credentials = md5([clientId, clientSecret].join('-'));
-    console.log('clientId', clientId);
-    console.log('clientSecret', clientSecret);
-    console.log('credentials', credentials);
     const target = `${API_BASE_URL}?url=${encodeURIComponent(url)}`;
-    const data = await fetch(target, {
-      headers: {
-        credentials,
-      },
-    });
+    const data = await fetch(target);
     return data.json();
   } catch (err) {
     console.trace(err);
