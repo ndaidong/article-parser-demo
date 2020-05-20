@@ -12,40 +12,18 @@
     "node": ">= 10.14.2"
   },
   "scripts": {
-    "start": "DEBUG=article-parser-demo:* node index",
-    "release": "ENV=prod DEBUG=article-parser-demo:* node build",
+    "start": "DEBUG=webrender:* PORT=7214 webren run ./",
+    "release": "DEBUG=webrender:* webren build ./ ./docs",
     "lint": "eslint .",
-    "pretest": "npm run lint",
-    "test": "NODE_ENV=test tap test/start.js --coverage --reporter=spec"
+    "test": "npm run lint"
   },
   "dependencies": {
-    "@rollup/plugin-commonjs": "^11.1.0",
-    "@rollup/plugin-node-resolve": "^7.1.3",
-    "@rollup/plugin-strip": "^1.3.2",
-    "autoprefixer": "^9.7.6",
     "bellajs": "^8.0.2",
-    "cheerio": "^1.0.0-rc.3",
-    "clean-css": "^4.2.3",
-    "debug": "^4.1.1",
-    "esm": "^3.2.25",
-    "express": "^4.17.1",
-    "html-minifier": "^4.0.0",
     "lit-html": "^1.2.1",
-    "postcss": "^7.0.29",
-    "postcss-custom-media": "^7.0.8",
-    "postcss-custom-properties": "^9.1.1",
-    "postcss-import": "^12.0.1",
-    "postcss-nested": "^4.2.1",
-    "postcss-short": "^5.0.0",
-    "pretty": "^2.0.0",
-    "rollup": "^2.8.2",
-    "rollup-plugin-cleanup": "^3.1.1",
-    "strip-css-comments": "^4.1.0",
-    "terser": "^4.6.13"
+    "webrender": "^2.0.1"
   },
   "devDependencies": {
-    "eslint-config-goes": "^1.1.8",
-    "tap": "^14.10.7"
+    "eslint-config-goes": "^1.1.8"
   },
   "license": "MIT"
 }
